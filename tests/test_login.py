@@ -1,26 +1,24 @@
+import os
 import pytest
 from pages.login_page import LoginPage
 from utilities.excel_utils import get_data_from_excel
-import time
 
-excel_data = get_data_from_excel("testdata/test_data.xlsx", "Sheet1")
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+EXCEL_PATH = os.path.join(BASE_DIR, "testdata", "test_data.xlsx")
 
 @pytest.mark.usefixtures("setup")
 class TestLogin:
 
-    @pytest.mark.parametrize("username, password, validity", excel_data)
-    def test_login_ddt(self, username, password, validity):
-        driver = self.driver
-        driver.get("https://opensource-demo.orangehrmlive.com/web/index.php/auth/login")
+    @pytest.mark.parametrize("username, password, validity", get_data_from_excel(EXCEL_PATH, "LoginData"))
+    def test_login_excel(self, username, password, validity):
+        self.driver.get("https://opensource-demo.orangehrmlive.com/web/index.php/auth/login")
         
-        login_pg = LoginPage(driver)
-        login_pg.enter_username(username)
-        login_pg.enter_password(password)
-        login_pg.click_login()
-        
-        time.sleep(3)
-        
+        login_page = LoginPage(self.driver)
+        login_page.enter_username(username)
+        login_page.enter_password(password)
+        login_page.click_login()
+
         if validity == "valid":
-            assert "dashboard" in driver.current_url.lower()
+            assert "dashboard" in self.driver.current_url.lower()
         else:
-            assert "login" in driver.current_url.lower()
+            assert "login" in self.driver.current_url.lower()

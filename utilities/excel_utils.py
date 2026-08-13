@@ -1,18 +1,19 @@
 import openpyxl
 
-def get_data_from_excel(file_path, sheet_name):
+def get_data_from_excel(file_path, sheet_name="LoginData"):
     workbook = openpyxl.load_workbook(file_path)
-    sheet = workbook[sheet_name]
-    total_rows = sheet.max_row
-    total_cols = sheet.max_column
     
-    data_list = []
-    
-    # Header row వదిలేసి, 2nd row నుండి డేటా తీసుకుంటాం
-    for r in range(2, total_rows + 1):
-        row_data = []
-        for c in range(1, total_cols + 1):
-            row_data.append(sheet.cell(row=r, column=c).value)
-        data_list.append(tuple(row_data))
+    # ఒకవేళ ఇచ్చిన సీట్ నేమ్ దొరకకపోతే, ఎక్సెల్‌లో ఉన్న ఫస్ట్ షీట్‌ని ఆటోమేటిక్‌గా సెలెక్ట్ చేసుకుంటుంది
+    if sheet_name in workbook.sheetnames:
+        sheet = workbook[sheet_name]
+    else:
+        sheet = workbook.active
         
-    return data_list
+    data = []
+    
+    # 2nd Row నుండి హెడర్స్ కాకుండా మిగతా డేటాని రీడ్ చేస్తుంది
+    for row in sheet.iter_rows(min_row=2, values_only=True):
+        if any(row):  # ఖాళీ రోస్ (empty rows) ఉంటే వదిలేస్తుంది
+            data.append(list(row))
+            
+    return data
