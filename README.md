@@ -1,36 +1,14 @@
-\# Selenium Python Hybrid Automation Framework
+![CI/CD Pipeline Status](https://github.com/sunnygajula/Selenium-Python-Automation/actions/workflows/test_pipeline.yml/badge.svg)
 
+# Selenium Python Hybrid Automation Framework
 
+This repository contains a robust, industry-standard Automation Testing Framework built using **Python**, **Selenium WebDriver**, **PyTest**, and **OpenPyXL**.
 
-This repository contains a robust, industry-standard Automation Testing Framework built using \*\*Python, Selenium WebDriver, PyTest, and OpenPyXL\*\*. 
+## 🚀 Key Features
 
-
-
-\## 🚀 Key Features
-
-\- \*\*Design Pattern\*\*: Page Object Model (POM) for high maintainability.
-
-\- \*\*Data-Driven Testing (DDT)\*\*: Driven by Excel (`openpyxl`) for handling multiple test combinations.
-
-\- \*\*Reporting\*\*: Automated HTML test execution reports generated using `pytest-html`.
-
-\- \*\*Framework Architecture\*\*: Clean folder structure separating test cases, page objects, utilities, and test data.
-
-
-
-\## 📁 Project Structure
-
-```text
-
-Selenium\_Python\_Automation/
-
-│── pages/          # Page Object classes (Locators and Page Actions)
-
-│── tests/          # PyTest Test Cases
-
-│── utilities/      # Utility helpers (Excel Reader, Data Handlers)
-
-│── testdata/       # Excel files storing test data
-
-│── reports/        # Generated HTML Execution Reports
-
+- **Design Pattern**: Page Object Model (POM) for high maintainability.
+- **Data-Driven Testing (DDT)**: Driven by Excel (`openpyxl`) for handling multiple test combinations.
+- **Reporting**: Automated HTML test execution reports generated using `pytest-html`.
+- **CI/CD Pipeline**: GitHub Actions integration with parallel test execution via `pytest-xdist`.
+- **Framework Architecture**: Clean folder structure separating test cases, page objects, utilities, and test data.
+-
