@@ -1,36 +1,38 @@
-name: Test Automation CI/CD Pipeline
+import time
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.chrome.options import Options
+from webdriver_manager.chrome import ChromeDriverManager
 
-on:
-  push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
-
-jobs:
-  run-automation-tests:
-    runs-on: ubuntu-latest
-
-    steps:
-    - name: Checkout Code from GitHub
-      uses: actions/checkout@v3
-
-    - name: Set up Python Environment
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.10'
-
-    - name: Install Dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install selenium pytest pytest-html openpyxl requests
-
-    - name: Run Test Suite (Headless Mode)
-      run: |
-        python -m pytest -v --html=reports/report.html
-
-    - name: Upload Test Report Artifact
-      if: always()
-      uses: actions/upload-artifact@v4
-      with:
-        name: execution-html-report
-        path: reports/report.html
+def test_handle_alert():
+    # GitHub Actions CI/CD లో కూడా రన్ అయ్యేలా Headless Options సెటప్
+    chrome_options = Options()
+    chrome_options.add_argument("--headless=new")
+    chrome_options.add_argument("--no-sandbox")
+    chrome_options.add_argument("--disable-dev-shm-usage")
+    
+    driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=chrome_options)
+    driver.implicitly_wait(10)
+    
+    # Alert ఉన్న వెబ్‌పేజీకి వెళ్లడం
+    driver.get("https://the-internet.herokuapp.com/javascript_alerts")
+    
+    # 1. Alert ని ట్రిగ్గర్ చేసే బటన్‌ని క్లిక్ చేయడం
+    driver.find_element(By.XPATH, "//button[text()='Click for JS Alert']").click()
+    
+    # 2. Alert కి స్విచ్ అవ్వడం
+    alert = driver.switch_to.alert
+    
+    # 3. Alert లోని మెసేజ్ ని సరిచూసుకోవడం
+    assert alert.text == "I am a JS Alert"
+    print(f"\n[ALERT TEXT]: {alert.text}")
+    
+    # 4. Alert ఓకే (Accept) చేయడం
+    alert.accept()
+    
+    # 5. Result ని చెక్ చేయడం
+    result_text = driver.find_element(By.ID, "result").text
+    assert result_text == "You successfully clicked an alert"
+    
+    driver.quit()
