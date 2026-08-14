@@ -1,35 +1,56 @@
-import pytest
 import requests
 
-BASE_URL = "https://jsonplaceholder.typicode.com"
-
-def test_get_posts_list():
-    # 1. API కి GET రిక్వెస్ట్ పంపుతున్నాం
-    response = requests.get(f"{BASE_URL}/posts/1")
+def test_get_user_details():
+    # 1. API Endpoint
+    url = "https://jsonplaceholder.typicode.com/users/1"
     
-    # 2. Status Code 200 (Success) అని చెక్ చేస్తున్నాం
+    # 2. Send GET Request with User-Agent Header
+    headers = {"User-Agent": "Mozilla/5.0"}
+    response = requests.get(url, headers=headers)
+    
+    # 3. Assert Status Code (200 OK రావాలో లేదో చెక్ చేయడం)
     assert response.status_code == 200
     
-    # 3. Response JSON డేటాని చెక్ చేస్తున్నాం
-    json_data = response.json()
-    assert json_data["id"] == 1
-    assert "title" in json_data
+    # 4. JSON Response ని డిక్షనరీగా మార్చుకోవడం
+    data = response.json()
+    
+    # 5. Assertions
+    assert data["id"] == 1
+    assert "email" in data
+    print(f"\n[API SUCCESS] User Name: {data['name']} | Email: {data['email']}")
+    import requests
 
-def test_create_post():
-    # 1. కొత్త పోస్ట్‌ని క్రియేట్ చేయడానికి డేటా (Payload)
-    payload = {
-        "title": "Automation Test",
-        "body": "API Testing with Python Requests",
-        "userId": 1
+def test_get_user_details():
+    url = "https://jsonplaceholder.typicode.com/users/1"
+    headers = {"User-Agent": "Mozilla/5.0"}
+    response = requests.get(url, headers=headers)
+    assert response.status_code == 200
+    data = response.json()
+    assert data["id"] == 1
+    assert "email" in data
+    print(f"\n[API SUCCESS] User Name: {data['name']} | Email: {data['email']}")
+
+
+# --- కొత్తగా యాడ్ చేస్తున్న POST Request టెస్ట్ కేస్ ---
+def test_create_user():
+    url = "https://jsonplaceholder.typicode.com/users"
+    
+    # 1. మనం పంపాల్సిన కొత్త యూజర్ డేటా (Payload)
+    user_payload = {
+        "name": "Sunny Gajula",
+        "username": "sunny_qa",
+        "email": "sunny@example.com"
     }
     
-    # 2. POST రిక్వెస్ట్ పంపుతున్నాం
-    response = requests.post(f"{BASE_URL}/posts", json=payload)
+    # 2. Send POST Request (json=user_payload అని పంపాలి)
+    response = requests.post(url, json=user_payload)
     
-    # 3. Status Code 201 (Created) అని చెక్ చేస్తున్నాం
+    # 3. Assert Status Code (201 Created రావాలో లేదో చెక్ చేయడం)
     assert response.status_code == 201
     
-    # 4. రెస్పాన్స్‌లో మన డేటా ఉందో లేదో చెక్ చేస్తున్నాం
-    json_data = response.json()
-    assert json_data["title"] == "Automation Test"
-    assert json_data["userId"] == 1
+    # 4. Response చెక్ చేయడం
+    response_data = response.json()
+    assert response_data["name"] == "Sunny Gajula"
+    assert "id" in response_data  # కొత్తగా ఐడీ జనరేట్ అయిందో లేదో చూస్తుంది
+    
+    print(f"\n[POST SUCCESS] Created User ID: {response_data['id']} for {response_data['name']}")
