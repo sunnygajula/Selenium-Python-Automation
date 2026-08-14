@@ -1,13 +1,6 @@
-from selenium import webdriver
-from selenium.webdriver.chrome.options import Options
-
-def test_google_title():
-    chrome_options = Options()
-    chrome_options.add_argument("--headless")
-    chrome_options.add_argument("--no-sandbox")
-    chrome_options.add_argument("--disable-dev-shm-usage")
-    
-    driver = webdriver.Chrome(options=chrome_options)
+def test_google_title(setup):
+    driver = setup
     driver.get("https://www.google.com")
+    
+    # ❌ Intentionally failing to test screenshot capture
     assert "Yahoo" in driver.title
-    driver.quit()
