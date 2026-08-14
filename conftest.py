@@ -13,13 +13,15 @@ def setup(request):
     
     driver = webdriver.Chrome(options=chrome_options)
     driver.implicitly_wait(10)
-    driver.maximize_window()
     
-    request.cls.driver = driver if request.cls else None
+    # Class based & Function based tests రెండింటికీ సేఫ్‌గా హ్యాండిల్ చేయడానికి
+    if request.cls is not None:
+        request.cls.driver = driver
+        
     yield driver
     driver.quit()
 
-# 📸 PyTest Hook: Failure వచ్చినప్పుడు ఆటోమేటిక్‌గా స్క్రీన్‌షాట్ తీసి HTML రిపోర్ట్‌కి యాడ్ చేయడానికి
+# 📸 Test Failure వచ్చినప్పుడు Screenshot తీసి HTML Report లో ఎంబెడ్ చేసే Hook
 @pytest.hookimpl(hookwrapper=True)
 def pytest_runtest_makereport(item, call):
     pytest_html = item.config.pluginmanager.getplugin('html')
@@ -30,8 +32,7 @@ def pytest_runtest_makereport(item, call):
     if report.when == 'call' or report.when == "setup":
         xfail = hasattr(report, 'wasxfail')
         if (report.failed and not xfail) or (report.skipped and xfail):
-            # Fixture నుండి డ్రైవర్‌ను తెచ్చుకోవడం
-            driver = item.funcargs.get('setup') or getattr(item.cls, 'driver', None)
+            driver = item.funcargs.get('setup') or (getattr(item.cls, 'driver', None) if item.cls else None)
             if driver:
                 screenshot_dir = "reports"
                 os.makedirs(screenshot_dir, exist_ok=True)

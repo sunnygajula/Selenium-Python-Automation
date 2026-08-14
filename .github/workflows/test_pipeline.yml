@@ -24,6 +24,13 @@ jobs:
         python -m pip install --upgrade pip
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
-    - name: Run PyTest in Parallel
+    - name: Run PyTest with HTML Report
       run: |
-        python -m pytest -n 2 -v
+        python -m pytest -n 2 -v --html=report.html --self-contained-html
+
+    - name: Upload Test Report Artifact
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: pytest-html-report
+        path: report.html
